@@ -19,6 +19,7 @@ export default function ToolPage() {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [processingMedia, setProcessingMedia] = useState<"video" | "audio" | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isSelectingFiles, setIsSelectingFiles] = useState(true);
 
   // Add effect to track media play state
   useEffect(() => {
@@ -478,11 +479,20 @@ export default function ToolPage() {
     return "Process File";
   };
 
+  // Add helper function for file size formatting
+  function formatFileSize(bytes: number) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
   return (
     <>
       <Header />
       <div className="container mx-auto p-4">
-        {mediaFiles.length === 0 ? (
+        {mediaFiles.length === 0 || isSelectingFiles ? (
           <Card
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
@@ -499,7 +509,7 @@ export default function ToolPage() {
               />
               <div className="p-4 rounded-lg">
                 <p className="mb-2 text-lg font-semibold text-indigo-700">
-                  Drag and drop video/audio files here
+                  {mediaFiles.length === 0 ? "Drag and drop video/audio files here" : "Add more files"}
                 </p>
                 <p className="text-sm text-gray-600 mb-4">
                   Supports .mp4, .webm, .mp3, .wav, .aac
@@ -515,7 +525,70 @@ export default function ToolPage() {
               </div>
             </CardContent>
           </Card>
-        ) : (
+        ) : null}
+
+        {mediaFiles.length > 0 && isSelectingFiles && (
+          <div className="space-y-4">
+            <div className="bg-white rounded-lg shadow-lg p-4 border border-indigo-100">
+              <h2 className="text-lg font-semibold text-indigo-700 mb-4">Selected Files</h2>
+              <div className="space-y-2">
+                {mediaFiles.map((media, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-gradient-to-r from-indigo-50/30 via-transparent to-purple-50/30 rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-full ${
+                        media.type === "video" 
+                          ? "bg-indigo-100 text-indigo-600"
+                          : "bg-purple-100 text-purple-600"
+                      }`}>
+                        {media.type === "video" ? "🎥" : "🎵"}
+                      </div>
+                      <div>
+                        <p className="font-medium">{media.file.name}</p>
+                        <p className="text-sm text-gray-600">
+                          {media.type === "video" ? "Video" : "Audio"} • {formatFileSize(media.file.size)}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                      onClick={() => {
+                        setMediaFiles(files => files.filter((_, i) => i !== index));
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-between mt-6 pt-4 border-t border-indigo-100">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setMediaFiles([]);
+                    setIsSelectingFiles(true);
+                  }}
+                  className="border-indigo-200 hover:bg-indigo-50"
+                >
+                  Clear All
+                </Button>
+                <Button
+                  onClick={() => setIsSelectingFiles(false)}
+                  className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 transition-all"
+                  disabled={mediaFiles.length === 0}
+                >
+                  Continue to Editor
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {mediaFiles.length > 0 && !isSelectingFiles && (
           <div className="space-y-4">
             {/* Media Preview */}
             {sortedMediaFiles.map((media, index) => (
