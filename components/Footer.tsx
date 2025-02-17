@@ -3,9 +3,6 @@ export const Footer = () => {
     <footer className="border-t">
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ClipWeave. All rights reserved.
-          </p>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <span>Made with ❤️ by</span>
             <a 
@@ -18,7 +15,7 @@ export const Footer = () => {
             </a>
           </div>
           <p className="text-sm text-muted-foreground">
-            Built with FFmpeg and Next.js
+            © {new Date().getFullYear()} ClipWeave. All rights reserved.
           </p>
         </div>
       </div>
