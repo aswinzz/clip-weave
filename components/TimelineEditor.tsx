@@ -4,25 +4,27 @@ import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { ZoomIn, ZoomOut, Scissors } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Slider } from "@/components/ui/slider"
 
-interface MediaFile {
-  file: File;
-  type: "video" | "audio";
-  url: string;
-  duration?: number;
-  segments: { start: number; end: number }[];
-}
+
+export interface MediaFile {
+    file: File;
+    type: "video" | "audio";
+    url: string;
+    duration?: number;
+    startTime?: number;
+    endTime?: number;
+    segments?: { start: number; end: number }[];
+  }
+  
 
 interface TimelineEditorProps {
   mediaFiles: MediaFile[];
-  onTimeUpdate: (type: "video" | "audio", startTime: number, endTime: number) => void;
   onSeek: (time: number, type: "video" | "audio") => void;
   onCut: (type: "video" | "audio", segment: { start: number; end: number }) => void;
   isProcessing: boolean;
 }
 
-const TimelineEditor: React.FC<TimelineEditorProps> = ({ mediaFiles, onTimeUpdate, onSeek, onCut, isProcessing }) => {
+const TimelineEditor: React.FC<TimelineEditorProps> = ({ mediaFiles, onSeek, onCut, isProcessing }) => {
   const [zoom, setZoom] = useState(1)
   const [videoTime, setVideoTime] = useState(0)
   const [audioTime, setAudioTime] = useState(0)
@@ -79,7 +81,6 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ mediaFiles, onTimeUpdat
     
     // Calculate position considering scroll and zoom
     const clickX = e.clientX - rect.left + scrollOffset;
-    const totalWidth = rect.width * zoom; // Account for zoom
     const clickPosition = clickX / rect.width; // Use original width for position
     
     const file = mediaFile;
@@ -197,7 +198,7 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ mediaFiles, onTimeUpdat
                 style={{ left: `${(i * 10) / zoom}%` }} 
               >
                 <span className="absolute bottom-3 text-xs transform -translate-x-1/2">
-                  {formatTime((i * file.duration) / (10 * zoom))}
+                  {formatTime((i * (file.duration || 0)) / (10 * zoom))}
                 </span>
               </div>
             ))}

@@ -8,28 +8,13 @@ import { useFFmpeg } from "@/hooks/useFFmpeg";
 import { PlayCircle, PauseCircle, Volume2 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { LoadingOverlay } from "@/components/LoadingOverlay";
-
-interface MediaFile {
-  file: File;
-  type: "video" | "audio";
-  url: string;
-  duration?: number;
-  startTime?: number;
-  endTime?: number;
-  segments?: { start: number; end: number }[];
-}
+import { Header } from "@/components/Header";
+import { MediaFile } from "@/components/TimelineEditor";
 
 export default function ToolPage() {
   const { ffmpeg, isLoaded: isFFmpegLoaded } = useFFmpeg();
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [trimSettings, setTrimSettings] = useState<{
-    video: { startTime: number; endTime: number };
-    audio: { startTime: number; endTime: number };
-  }>({
-    video: { startTime: 0, endTime: 0 },
-    audio: { startTime: 0, endTime: 0 },
-  });
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [processingMedia, setProcessingMedia] = useState<"video" | "audio" | null>(null);
@@ -350,10 +335,6 @@ export default function ToolPage() {
     // Reset all states
     setMediaFiles([]);
     setIsProcessing(false);
-    setTrimSettings({
-      video: { startTime: 0, endTime: 0 },
-      audio: { startTime: 0, endTime: 0 },
-    });
     setIsVideoPlaying(false);
     setIsAudioPlaying(false);
   }, [mediaFiles]);
@@ -484,13 +465,8 @@ export default function ToolPage() {
     }
   }, [ffmpeg, isFFmpegLoaded, mediaFiles]);
 
-  // Update the merge button visibility logic
-  const showMergeButton = mediaFiles.length === 2 && 
-    mediaFiles.some(m => m.type === "video") && 
-    mediaFiles.some(m => m.type === "audio");
-
   // Sort media files to ensure video comes before audio
-  const sortedMediaFiles = [...mediaFiles].sort((a, b) => 
+  const sortedMediaFiles = [...mediaFiles].sort((a) => 
     a.type === "video" ? -1 : 1
   );
 
@@ -503,199 +479,190 @@ export default function ToolPage() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      {mediaFiles.length === 0 ? (
-        <Card
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDrop}
-          className="border-dashed border-2 p-8 text-center mb-4 bg-muted/50"
-        >
-          <CardContent className="flex flex-col items-center gap-4">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="video/*,audio/*"
-              multiple
-              className="hidden"
-              onChange={(e) => e.target.files && handleFileSelect(e.target.files)}
-            />
-            <div className="p-4 rounded-lg">
-              <p className="mb-2 text-lg">Drag and drop video/audio files here</p>
-              <p className="text-sm text-muted-foreground mb-4">
-                Supports .mp4, .webm, .mp3, .wav, .aac
-              </p>
-              <div className="border-t border-border pt-4">
-                <Button 
-                  onClick={handleClick}
-                  variant="secondary"
-                >
-                  Select Files
-                </Button>
+    <>
+      <Header />
+      <div className="container mx-auto p-4">
+        {mediaFiles.length === 0 ? (
+          <Card
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+            className="border-dashed border-2 p-8 text-center mb-4 bg-muted/50"
+          >
+            <CardContent className="flex flex-col items-center gap-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="video/*,audio/*"
+                multiple
+                className="hidden"
+                onChange={(e) => e.target.files && handleFileSelect(e.target.files)}
+              />
+              <div className="p-4 rounded-lg">
+                <p className="mb-2 text-lg">Drag and drop video/audio files here</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Supports .mp4, .webm, .mp3, .wav, .aac
+                </p>
+                <div className="border-t border-border pt-4">
+                  <Button 
+                    onClick={handleClick}
+                    variant="secondary"
+                  >
+                    Select Files
+                  </Button>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {/* Media Preview */}
-          {sortedMediaFiles.map((media, index) => (
-            <Card key={index} className="p-4">
-              {media.type === "video" ? (
-                <div className="space-y-4">
-                  <div className="relative aspect-video bg-black">
-                    <video
-                      src={media.url}
-                      className="w-full h-full"
-                      playsInline
-                      controls={false}
-                    />
-                    {processingMedia === "video" && (
-                      <LoadingOverlay message="Processing video cut..." />
-                    )}
-                    <div className="absolute bottom-0 left-0 right-0 p-2 flex justify-between items-center bg-black/50">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-white hover:text-white/80"
-                        onClick={() => {
-                          const video = document.querySelector('video');
-                          if (video?.paused) video.play();
-                          else video?.pause();
-                        }}
-                      >
-                        {isVideoPlaying ? (
-                          <PauseCircle className="h-6 w-6" />
-                        ) : (
-                          <PlayCircle className="h-6 w-6" />
-                        )}
-                      </Button>
-                      <div className="flex items-center gap-2 text-white">
-                        <Volume2 className="h-4 w-4" />
-                        <Slider
-                          className="w-24"
-                          defaultValue={[100]}
-                          max={100}
-                          step={1}
-                          onValueChange={([value]) => {
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {/* Media Preview */}
+            {sortedMediaFiles.map((media, index) => (
+              <Card key={index} className="p-4">
+                {media.type === "video" ? (
+                  <div className="space-y-4">
+                    <div className="relative aspect-video bg-black">
+                      <video
+                        src={media.url}
+                        className="w-full h-full"
+                        playsInline
+                        controls={false}
+                      />
+                      {processingMedia === "video" && (
+                        <LoadingOverlay message="Processing video cut..." />
+                      )}
+                      <div className="absolute bottom-0 left-0 right-0 p-2 flex justify-between items-center bg-black/50">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-white hover:text-white/80"
+                          onClick={() => {
                             const video = document.querySelector('video');
-                            if (video) video.volume = value / 100;
+                            if (video?.paused) video.play();
+                            else video?.pause();
                           }}
-                        />
+                        >
+                          {isVideoPlaying ? (
+                            <PauseCircle className="h-6 w-6" />
+                          ) : (
+                            <PlayCircle className="h-6 w-6" />
+                          )}
+                        </Button>
+                        <div className="flex items-center gap-2 text-white">
+                          <Volume2 className="h-4 w-4" />
+                          <Slider
+                            className="w-24"
+                            defaultValue={[100]}
+                            max={100}
+                            step={1}
+                            onValueChange={([value]) => {
+                              const video = document.querySelector('video');
+                              if (video) video.volume = value / 100;
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  {/* Video Timeline */}
-                  <TimelineEditor
-                    mediaFiles={[media]}
-                    onTimeUpdate={(type, startTime, endTime) => {
-                      setTrimSettings(prev => ({
-                        ...prev,
-                        [type]: { startTime, endTime }
-                      }));
-                    }}
-                    onSeek={(time, type) => {
-                      if (type === "video") {
-                        const video = document.querySelector('video');
-                        if (video) video.currentTime = time;
-                      } else {
-                        const audio = document.querySelector('audio');
-                        if (audio) audio.currentTime = time;
-                      }
-                    }}
-                    onCut={handleCut}
-                    isProcessing={isProcessing}
-                  />
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="relative h-16 bg-black/10 rounded-md">
-                    <audio
-                      src={media.url}
-                      className="hidden"
-                      controls={false}
-                    />
-                    {processingMedia === "audio" && (
-                      <LoadingOverlay message="Processing audio cut..." />
-                    )}
-                    <div className="absolute inset-0 p-2 flex justify-between items-center">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
+                    {/* Video Timeline */}
+                    <TimelineEditor
+                      mediaFiles={[media]}
+                      onSeek={(time, type) => {
+                        if (type === "video") {
+                          const video = document.querySelector('video');
+                          if (video) video.currentTime = time;
+                        } else {
                           const audio = document.querySelector('audio');
-                          if (audio?.paused) audio.play();
-                          else audio?.pause();
-                        }}
-                      >
-                        {isAudioPlaying ? (
-                          <PauseCircle className="h-6 w-6" />
-                        ) : (
-                          <PlayCircle className="h-6 w-6" />
-                        )}
-                      </Button>
-                      <div className="flex items-center gap-2">
-                        <Volume2 className="h-4 w-4" />
-                        <Slider
-                          className="w-24"
-                          defaultValue={[100]}
-                          max={100}
-                          step={1}
-                          onValueChange={([value]) => {
+                          if (audio) audio.currentTime = time;
+                        }
+                      }}
+                      onCut={handleCut}
+                      isProcessing={isProcessing}
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="relative h-16 bg-black/10 rounded-md">
+                      <audio
+                        src={media.url}
+                        className="hidden"
+                        controls={false}
+                      />
+                      {processingMedia === "audio" && (
+                        <LoadingOverlay message="Processing audio cut..." />
+                      )}
+                      <div className="absolute inset-0 p-2 flex justify-between items-center">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
                             const audio = document.querySelector('audio');
-                            if (audio) audio.volume = value / 100;
+                            if (audio?.paused) audio.play();
+                            else audio?.pause();
                           }}
-                        />
+                        >
+                          {isAudioPlaying ? (
+                            <PauseCircle className="h-6 w-6" />
+                          ) : (
+                            <PlayCircle className="h-6 w-6" />
+                          )}
+                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Volume2 className="h-4 w-4" />
+                          <Slider
+                            className="w-24"
+                            defaultValue={[100]}
+                            max={100}
+                            step={1}
+                            onValueChange={([value]) => {
+                              const audio = document.querySelector('audio');
+                              if (audio) audio.volume = value / 100;
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
+                    {/* Audio Timeline */}
+                    <TimelineEditor
+                      mediaFiles={[media]}
+                      onSeek={(time, type) => {
+                        if (type === "video") {
+                          const video = document.querySelector('video');
+                          if (video) video.currentTime = time;
+                        } else {
+                          const audio = document.querySelector('audio');
+                          if (audio) audio.currentTime = time;
+                        }
+                      }}
+                      onCut={handleCut}
+                      isProcessing={isProcessing}
+                    />
                   </div>
-                  {/* Audio Timeline */}
-                  <TimelineEditor
-                    mediaFiles={[media]}
-                    onTimeUpdate={(type, startTime, endTime) => {
-                      setTrimSettings(prev => ({
-                        ...prev,
-                        [type]: { startTime, endTime }
-                      }));
-                    }}
-                    onSeek={(time, type) => {
-                      if (type === "video") {
-                        const video = document.querySelector('video');
-                        if (video) video.currentTime = time;
-                      } else {
-                        const audio = document.querySelector('audio');
-                        if (audio) audio.currentTime = time;
-                      }
-                    }}
-                    onCut={handleCut}
-                    isProcessing={isProcessing}
-                  />
-                </div>
-              )}
-              <p className="mt-2 text-sm text-muted-foreground">{media.file.name}</p>
-            </Card>
-          ))}
+                )}
+                <p className="mt-2 text-sm text-muted-foreground">{media.file.name}</p>
+              </Card>
+            ))}
 
-          {/* Action Buttons */}
-          <div className="flex gap-4">
-            <Button
-              onClick={handleMerge}
-              disabled={!isFFmpegLoaded || isProcessing}
-              className="flex-1"
-            >
-              {getButtonText()}
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={handleReset}
-              disabled={isProcessing}
-              className="w-24"
-            >
-              Restart
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex gap-4">
+              <Button
+                onClick={handleMerge}
+                disabled={!isFFmpegLoaded || isProcessing}
+                className="flex-1"
+              >
+                {getButtonText()}
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={handleReset}
+                disabled={isProcessing}
+                className="w-24"
+              >
+                Restart
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
