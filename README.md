@@ -2,8 +2,6 @@
 
 ClipWeave is a browser-based audio and video editing tool that allows you to seamlessly merge and edit media files directly in your browser. No downloads, no installations, and no data ever leaves your device.
 
-![ClipWeave Screenshot](public/screenshot.png)
-
 ## Features
 
 - 🎥 **Video Editing**: Cut and trim video files with frame-perfect accuracy
