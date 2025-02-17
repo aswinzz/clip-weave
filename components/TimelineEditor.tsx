@@ -215,14 +215,14 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ mediaFiles, onSeek, onC
               </div>
             )}
 
-            {[...Array(Math.ceil(11 * zoom))].map((_, i) => (
+            {[...Array(Math.ceil(6 * zoom))].map((_, i) => (
               <div 
                 key={i} 
                 className="absolute bottom-0 w-px h-2 bg-muted-foreground" 
-                style={{ left: `${(i * 10) / zoom}%` }} 
+                style={{ left: `${(i * 20) / zoom}%` }} 
               >
-                <span className="absolute bottom-3 text-xs transform -translate-x-1/2">
-                  {formatTime((i * (file.duration || 0)) / (10 * zoom))}
+                <span className="absolute bottom-3 text-xs transform -translate-x-1/2 whitespace-nowrap bg-white/80 px-1 rounded">
+                  {formatTime((i * (file.duration || 0)) / (5 * zoom))}
                 </span>
               </div>
             ))}
