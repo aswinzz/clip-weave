@@ -486,7 +486,7 @@ export default function ToolPage() {
           <Card
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
-            className="border-dashed border-2 p-8 text-center mb-4 bg-muted/50"
+            className="border-dashed border-2 border-indigo-200 p-8 text-center mb-4 bg-gradient-to-b from-indigo-50/50 to-purple-50/50"
           >
             <CardContent className="flex flex-col items-center gap-4">
               <input
@@ -498,14 +498,16 @@ export default function ToolPage() {
                 onChange={(e) => e.target.files && handleFileSelect(e.target.files)}
               />
               <div className="p-4 rounded-lg">
-                <p className="mb-2 text-lg">Drag and drop video/audio files here</p>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="mb-2 text-lg font-semibold text-indigo-700">
+                  Drag and drop video/audio files here
+                </p>
+                <p className="text-sm text-gray-600 mb-4">
                   Supports .mp4, .webm, .mp3, .wav, .aac
                 </p>
-                <div className="border-t border-border pt-4">
+                <div className="border-t border-indigo-100 pt-4">
                   <Button 
                     onClick={handleClick}
-                    variant="secondary"
+                    className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 transition-all"
                   >
                     Select Files
                   </Button>
@@ -517,10 +519,10 @@ export default function ToolPage() {
           <div className="space-y-4">
             {/* Media Preview */}
             {sortedMediaFiles.map((media, index) => (
-              <Card key={index} className="p-4">
+              <Card key={index} className="p-4 border-indigo-100 bg-gradient-to-r from-indigo-50/30 via-transparent to-purple-50/30">
                 {media.type === "video" ? (
                   <div className="space-y-4">
-                    <div className="relative aspect-video bg-black">
+                    <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
                       <video
                         src={media.url}
                         className="w-full h-full"
@@ -530,7 +532,7 @@ export default function ToolPage() {
                       {processingMedia === "video" && (
                         <LoadingOverlay message="Processing video cut..." />
                       )}
-                      <div className="absolute bottom-0 left-0 right-0 p-2 flex justify-between items-center bg-black/50">
+                      <div className="absolute bottom-0 left-0 right-0 p-2 flex justify-between items-center bg-gradient-to-t from-black/80 to-transparent">
                         <Button
                           variant="ghost"
                           size="icon"
@@ -580,7 +582,7 @@ export default function ToolPage() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="relative h-16 bg-black/10 rounded-md">
+                    <div className="relative h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
                       <audio
                         src={media.url}
                         className="hidden"
@@ -637,7 +639,7 @@ export default function ToolPage() {
                     />
                   </div>
                 )}
-                <p className="mt-2 text-sm text-muted-foreground">{media.file.name}</p>
+                <p className="mt-2 text-sm text-gray-600">{media.file.name}</p>
               </Card>
             ))}
 
@@ -646,7 +648,7 @@ export default function ToolPage() {
               <Button
                 onClick={handleMerge}
                 disabled={!isFFmpegLoaded || isProcessing}
-                className="flex-1"
+                className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 transition-all"
               >
                 {getButtonText()}
               </Button>
@@ -655,7 +657,7 @@ export default function ToolPage() {
                 variant="outline"
                 onClick={handleReset}
                 disabled={isProcessing}
-                className="w-24"
+                className="w-24 border-indigo-200 hover:bg-indigo-50 transition-all"
               >
                 Restart
               </Button>

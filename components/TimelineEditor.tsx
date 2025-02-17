@@ -136,25 +136,52 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ mediaFiles, onSeek, onC
     if (!file?.duration) return null;
 
     return (
-      <div className="space-y-2">
-        <div className="relative overflow-x-auto">
+      <div className="w-full bg-white rounded-lg shadow-lg p-4 border border-indigo-100">
+        <div className="mb-4 flex justify-between items-center">
+          <div>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={() => setZoom(z => Math.max(z - 0.1, 0.5))}
+              className="border-indigo-200 hover:bg-indigo-50"
+            >
+              <ZoomOut className="h-4 w-4 text-indigo-500" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={() => setZoom(z => Math.min(z + 0.1, 2))} 
+              className="ml-2 border-indigo-200 hover:bg-indigo-50"
+            >
+              <ZoomIn className="h-4 w-4 text-indigo-500" />
+            </Button>
+          </div>
+          <span className="text-sm text-gray-600">
+            {formatTime(type === "video" ? videoTime : audioTime)} / 
+            {formatTime(mediaFile.duration || 0)}
+          </span>
+        </div>
+
+        <div className="relative h-20 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-md">
           <div
-            className="relative h-20 bg-muted rounded-md"
+            className="relative h-full w-full"
             style={{ 
               width: `${100 * zoom}%`,
               minWidth: '100%'
             }}
             onClick={(e) => handleTimelineClick(e, type)}
           >
-            {/* Base track */}
             <div
-              className={`absolute top-0 ${type === "video" ? "bg-blue-500/20" : "bg-green-500/20"} h-full w-full`}
+              className={`absolute top-0 ${
+                type === "video" 
+                  ? "bg-gradient-to-r from-indigo-200/20 to-purple-200/20" 
+                  : "bg-gradient-to-r from-purple-200/20 to-pink-200/20"
+              } h-full w-full`}
             />
 
-            {/* Selection overlay */}
             {inPoint !== null && outPoint !== null && (
               <div
-                className="absolute top-0 bg-yellow-500/20 h-full"
+                className="absolute top-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 h-full"
                 style={{
                   left: `${(inPoint / file.duration) * 100}%`,
                   width: `${((outPoint - inPoint) / file.duration) * 100}%`
@@ -162,13 +189,11 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ mediaFiles, onSeek, onC
               />
             )}
 
-            {/* Current time indicator */}
             <div 
               className="absolute top-0 w-0.5 h-full bg-primary" 
               style={{ left: `${(currentTime / file.duration) * 100}%` }} 
             />
 
-            {/* In/Out points */}
             {inPoint !== null && (
               <div 
                 className="absolute top-0 w-0.5 h-full bg-yellow-500" 
@@ -190,7 +215,6 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ mediaFiles, onSeek, onC
               </div>
             )}
 
-            {/* Time markers */}
             {[...Array(Math.ceil(11 * zoom))].map((_, i) => (
               <div 
                 key={i} 
@@ -205,14 +229,13 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ mediaFiles, onSeek, onC
           </div>
         </div>
 
-        {/* Cut button */}
         {inPoint !== null && outPoint !== null && (
           <Button
             size="sm"
             variant="outline"
             onClick={() => handleCut(type)}
             disabled={isProcessing}
-            className="w-full"
+            className="w-full border-indigo-200 hover:bg-indigo-50 text-indigo-600"
           >
             {isProcessing ? (
               "Processing..."
@@ -230,21 +253,6 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ mediaFiles, onSeek, onC
 
   return (
     <div className="w-full bg-background rounded-lg shadow-lg p-4">
-      <div className="mb-4 flex justify-between items-center">
-        <div>
-          <Button variant="outline" size="icon" onClick={() => setZoom(z => Math.max(z - 0.1, 0.5))}>
-            <ZoomOut className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="icon" onClick={() => setZoom(z => Math.min(z + 0.1, 2))} className="ml-2">
-            <ZoomIn className="h-4 w-4" />
-          </Button>
-        </div>
-        <span className="text-sm text-muted-foreground">
-          {formatTime(type === "video" ? videoTime : audioTime)} / 
-          {formatTime(mediaFile.duration || 0)}
-        </span>
-      </div>
-
       {renderTimeline(type)}
     </div>
   )
