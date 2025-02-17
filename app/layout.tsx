@@ -11,6 +11,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "ClipWeave - Audio & Video Editor",
   description: "Seamlessly merge and edit your audio and video clips",
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
