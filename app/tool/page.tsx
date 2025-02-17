@@ -504,13 +504,11 @@ export default function ToolPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Media Editor</h1>
-      
       {mediaFiles.length === 0 ? (
         <Card
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
-          className="border-dashed border-2 p-8 text-center mb-4  bg-muted/50"
+          className="border-dashed border-2 p-8 text-center mb-4 bg-muted/50"
         >
           <CardContent className="flex flex-col items-center gap-4">
             <input
