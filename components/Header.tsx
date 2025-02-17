@@ -1,18 +1,17 @@
-import { ClipWeaveIcon } from "./ClipWeaveIcon";
+import Link from "next/link";
+import { ClipWeaveIcon } from "@/components/ClipWeaveIcon";
 
 export const Header = () => {
   return (
     <header className="border-b">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center gap-2 py-4">
-          <ClipWeaveIcon className="w-8 h-8" />
-          <div>
-            <h1 className="font-bold text-xl">ClipWeave</h1>
-            <p className="text-sm text-muted-foreground">
-              Seamlessly merge and edit your audio and video clips
-            </p>
-          </div>
-        </div>
+      <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+        <Link 
+          href="/" 
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+        >
+          <ClipWeaveIcon className="h-6 w-6 text-indigo-500" />
+          <span className="font-semibold text-lg">ClipWeave</span>
+        </Link>
       </div>
     </header>
   );
