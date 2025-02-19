@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const Footer = () => {
   return (
     <footer className="border-t">
@@ -13,6 +15,14 @@ export const Footer = () => {
             >
               Aswin VB
             </a>
+          </div>
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <Link href="/terms" className="hover:text-indigo-500 transition-colors">
+              Terms
+            </Link>
+            <Link href="/privacy" className="hover:text-indigo-500 transition-colors">
+              Privacy
+            </Link>
           </div>
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} ClipWeave. All rights reserved.
