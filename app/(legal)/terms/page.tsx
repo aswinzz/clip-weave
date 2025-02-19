@@ -28,7 +28,7 @@ export default function TermsPage() {
 
         <h2 className="text-xl font-semibold mt-6 mb-4">5. Limitations</h2>
         <p className="mb-4">
-          ClipWeave is provided "as is" without any warranties. We are not responsible for any data loss or issues arising from using the service.
+          ClipWeave is provided &apos;as is&apos; without any warranties. We are not responsible for any data loss or issues arising from using the service.
         </p>
       </div>
     </div>
