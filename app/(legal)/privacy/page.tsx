@@ -28,7 +28,13 @@ export default function PrivacyPage() {
 
         <h2 className="text-xl font-semibold mt-6 mb-4">Contact</h2>
         <p className="mb-4">
-          For any privacy concerns, please contact us through our website.
+          For any privacy concerns, please contact me at{" "}
+          <a 
+            href="mailto:aswinvb.aswin6@gmail.com"
+            className="text-indigo-500 hover:text-indigo-600 transition-colors"
+          >
+            aswinvb.aswin6@gmail.com
+          </a>
         </p>
       </div>
     </div>
