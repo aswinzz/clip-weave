@@ -4,7 +4,7 @@ import { BackgroundBeams } from "@/components/ui/background-beams";
 import { FeaturesSection } from "@/components/ui/features-section";
 import { Scissors, GitMerge, Lock, Sparkles, Globe, Ban } from "lucide-react";
 import { ClipWeaveIcon } from "@/components/ClipWeaveIcon";
-
+import Image from "next/image";
 
 export default function LandingPage() {
   const features = [
@@ -77,7 +77,22 @@ export default function LandingPage() {
               </Link>
               <span className="text-sm text-gray-500">No signup required • 100% free</span>
             </div>
-
+            
+            <div className="flex justify-center pt-4">
+              <a 
+                href="https://www.producthunt.com/posts/clipweave?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-clipweave" 
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Image 
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=888138&theme=light&t=1740041224108" 
+                  alt="ClipWeave - Audio&#0032;&#0038;&#0032;Video&#0032;editor | Product Hunt"
+                  width="250"
+                  height="54"
+                  className="transition-all"
+                />
+              </a>
+            </div>
             {/* <div className="flex flex-wrap justify-center gap-3 mt-12">
               <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 backdrop-blur-sm px-4 py-1 rounded-full text-sm text-indigo-300 flex items-center gap-2 border border-indigo-500/20">
                 <Lock className="w-4 h-4" />
